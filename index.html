@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File Upload</title>
+</head>
+<body>
+  <h1>Upload a File</h1>
+  <form id="uploadForm">
+    <input type="file" id="fileInput" />
+    <button type="submit">Upload</button>
+  </form>
+
+  <p id="status"></p>
+
+  <script>
+    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const file = document.getElementById("fileInput").files[0];
+      if (!file) {
+        document.getElementById("status").innerText = "Please select a file.";
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("myFile", file);
+
+      try {
+        const response = await fetch("/.netlify/functions/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await response.text();
+        document.getElementById("status").innerText = result;
+      } catch (err) {
+        document.getElementById("status").innerText = "Upload failed: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
